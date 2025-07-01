@@ -2,7 +2,7 @@
 
 Une Proof of Concept (POC) pour une application de chat en temps réel développée pour "Your Car Your Way".
 
-## 🚀 Stack Technique
+## Stack Technique
 
 ### Frontend
 - **Angular 19** - Framework JavaScript moderne
@@ -19,11 +19,8 @@ Une Proof of Concept (POC) pour une application de chat en temps réel développ
 
 ### Architecture
 - **API REST** - Communication via HTTP/JSON
-- **Polling** - Récupération des messages toutes les 2 secondes
-- **CORS** - Configuration pour permettre les appels cross-origin
-- **Stockage en mémoire** - Messages stockés temporairement
 
-## 📋 Prérequis
+## Prérequis
 
 Avant d'installer l'application, assurez-vous d'avoir :
 
@@ -33,7 +30,7 @@ Avant d'installer l'application, assurez-vous d'avoir :
 - **Maven 3.6+**
 - **Git** pour cloner le repository
 
-## 🛠️ Installation
+## Installation
 
 ### 1. Cloner le repository
 
@@ -83,119 +80,4 @@ Le frontend sera accessible sur `http://localhost:4200`
 4. **Taper vos messages** dans le champ de saisie en bas
 5. **Appuyer sur Entrée ou cliquer sur "Send"** pour envoyer
 
-## 🏗️ Architecture de l'Application
 
-```
-┌─────────────────┐     HTTP/JSON     ┌──────────────────┐
-│   Frontend      │ ◄──────────────► │    Backend       │
-│   Angular 19    │    (Polling)     │   Spring Boot    │
-│   localhost:4200│                  │   localhost:8080 │
-└─────────────────┘                  └──────────────────┘
-         │                                      │
-         ▼                                      ▼
-┌─────────────────┐                  ┌──────────────────┐
-│   Chat UI       │                  │   REST API       │
-│   Components    │                  │   /api/messages  │
-└─────────────────┘                  └──────────────────┘
-```
-
-## 📝 Fonctionnalités
-
-### ✅ Implémentées
-- ✅ Interface utilisateur responsive
-- ✅ Saisie du nom d'utilisateur
-- ✅ Envoi et réception de messages
-- ✅ Messages système (JOIN/LEAVE)
-- ✅ API REST conforme aux standards
-- ✅ Gestion des erreurs de connexion
-- ✅ Indicateur de statut de connexion
-
-### 🔄 Améliorations Possibles
-- ⏳ WebSockets pour la communication temps réel
-- ⏳ Persistance des données (base de données)
-- ⏳ Authentification des utilisateurs
-- ⏳ Salles de chat multiples
-- ⏳ Historique des messages
-- ⏳ Notifications push
-
-## 🔧 Configuration de Développement
-
-### Variables d'Environnement
-
-**Frontend (Angular)**
-```typescript
-// src/app/chat.service.ts
-private readonly apiUrl = 'http://localhost:8080/api';
-```
-
-**Backend (Spring Boot)**
-```java
-// application.properties
-server.port=8080
-```
-
-### Scripts Disponibles
-
-**Frontend**
-```bash
-npm start          # Démarrer en mode développement
-npm run build      # Build de production
-npm test           # Lancer les tests
-```
-
-**Backend**
-```bash
-mvn spring-boot:run    # Démarrer l'application
-mvn test              # Lancer les tests
-mvn clean package     # Créer le JAR de production
-```
-
-## 🐛 Résolution de Problèmes
-
-### Erreur CORS
-Si vous rencontrez des erreurs CORS, vérifiez que :
-- Le backend est démarré sur le port 8080
-- La configuration `@CrossOrigin` est présente dans le contrôleur
-
-### Port déjà utilisé
-Si le port 4200 ou 8080 est occupé :
-```bash
-# Frontend - changer le port
-ng serve --port 4201
-
-# Backend - modifier application.properties
-server.port=8081
-```
-
-### Problème de saisie
-Si la saisie ne fonctionne pas, vérifiez que `FormsModule` est bien importé.
-
-## 📄 Structure du Projet
-
-```
-POC/
-├── front/                 # Application Angular
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── chat/     # Composant de chat
-│   │   │   └── chat.service.ts
-│   │   └── main.ts
-│   └── package.json
-├── back/                  # Application Spring Boot
-│   ├── src/main/java/com/example/chat/
-│   │   ├── ChatRestController.java
-│   │   ├── ChatService.java
-│   │   ├── ChatMessage.java
-│   │   └── ChatBackendApplication.java
-│   └── pom.xml
-└── README.md
-```
-
-## 👥 Contribution
-
-Cette POC a été développée pour démontrer les capacités de communication en temps réel pour "Your Car Your Way".
-
----
-
-**Version :** 0.0.1-SNAPSHOT  
-**Dernière mise à jour :** 7 janvier 2025
