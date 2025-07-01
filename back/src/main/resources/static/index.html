@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot WebSocket Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #messageArea { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        #messageForm { display: flex; gap: 10px; }
+        #messageInput { flex: 1; padding: 5px; }
+        #sendButton { padding: 5px 15px; }
+        .message { margin: 5px 0; }
+        .join { color: green; font-style: italic; }
+        .leave { color: red; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div id="page">
+        <h1>Spring Boot WebSocket Chat</h1>
+        
+        <div id="username-page">
+            <div>
+                <label>Enter your name:</label>
+                <input type="text" id="name" placeholder="Enter your name"/>
+                <button id="connect" onclick="connect()">Join Chat</button>
+            </div>
+        </div>
+
+        <div id="chat-page" style="display: none;">
+            <div id="messageArea"></div>
+            <div id="messageForm">
+                <input type="text" id="messageInput" placeholder="Type a message..." />
+                <button id="sendButton" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    
+    <script>
+        var stompClient = null;
+        var username = null;
+
+        function connect() {
+            username = document.getElementById('name').value.trim();
+            if(username) {
+                document.getElementById('username-page').style.display = 'none';
+                document.getElementById('chat-page').style.display = 'block';
+
+                var socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
+                stompClient.connect({}, onConnected, onError);
+            }
+        }
+
+        function onConnected() {
+            stompClient.subscribe('/topic/public', onMessageReceived);
+            stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}));
+        }
+
+        function onError(error) {
+            console.log('Could not connect to WebSocket server. Please refresh this page to try again!');
+        }
+
+        function sendMessage() {
+            var messageContent = document.getElementById('messageInput').value.trim();
+            if(messageContent && stompClient) {
+                var chatMessage = {
+                    sender: username,
+                    content: messageContent,
+                    type: 'CHAT'
+                };
+                stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+                document.getElementById('messageInput').value = '';
+            }
+        }
+
+        function onMessageReceived(payload) {
+            var message = JSON.parse(payload.body);
+            var messageArea = document.getElementById('messageArea');
+            var messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+
+            if(message.type === 'JOIN') {
+                messageElement.classList.add('join');
+                messageElement.textContent = message.sender + ' joined the chat';
+            } else if (message.type === 'LEAVE') {
+                messageElement.classList.add('leave');
+                messageElement.textContent = message.sender + ' left the chat';
+            } else {
+                messageElement.textContent = message.sender + ': ' + message.content;
+            }
+
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }
+
+        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

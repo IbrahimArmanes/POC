@@ -1,0 +1,49 @@
+<div class="chat-container">
+  <!-- Username Form -->
+  <div *ngIf="showUsernameForm" class="username-form">
+    <h2>PoC, Chat Support Client pour "Your Car Your Way"</h2>
+    <p>Enter your name to start chatting</p>
+    <input 
+      type="text" 
+      placeholder="Enter your name" 
+      [(ngModel)]="username"
+      (keyup.enter)="joinChat()"
+      class="username-input">
+    <button (click)="joinChat()" [disabled]="!username?.trim()">Join Chat</button>
+  </div>
+
+  <!-- Chat Interface -->
+  <div *ngIf="!showUsernameForm" class="chat-interface">
+    <div class="chat-header">
+      <span>Chat Support Client - {{ username }}</span>
+      <span class="connection-status" [class.connected]="connected">
+        {{ connected ? 'Connected' : 'Connecting...' }}
+      </span>
+    </div>
+
+    <div class="messages-area" #messagesContainer>
+      <div *ngFor="let message of messages" class="message" [ngClass]="getMessageClass(message)">
+        <div *ngIf="message.type === 'CHAT'">
+          <strong>{{ message.sender }}:</strong> {{ message.content }}
+        </div>
+        <div *ngIf="message.type === 'JOIN'" class="system-message">
+          {{ message.sender }} joined the chat
+        </div>
+        <div *ngIf="message.type === 'LEAVE'" class="system-message">
+          {{ message.sender }} left the chat
+        </div>
+      </div>
+    </div>
+
+    <div class="message-input-area">
+      <input 
+        type="text" 
+        placeholder="Type your message..."
+        [(ngModel)]="messageContent"
+        (keyup.enter)="sendMessage()"
+        [disabled]="!connected"
+        class="message-input">
+      <button (click)="sendMessage()" [disabled]="!messageContent?.trim() || !connected">Send</button>
+    </div>
+  </div>
+</div>
